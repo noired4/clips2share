@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='clips2share',
-    version='0.0.1',
+    version='0.0.2',
     url='https://codeberg.org/c2s/clips2share',
     author='c2s',
     author_email='c2s@noreply.codeberg.org',
@@ -15,4 +15,7 @@ setup(
         'torf',
         'vcsi'
     ],
+    entry_points={
+        'console_scripts': ['clips2share=clips2share.clips2share:main'],
+    }
 )
