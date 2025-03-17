@@ -4,8 +4,9 @@ import requests
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 from importlib.resources import files
-from os import makedirs, symlink
+from os import getenv, makedirs, symlink
 from os.path import basename, isfile, splitext
+from platformdirs import user_config_dir
 from shutil import copyfile, move
 from torf import Torrent
 from urllib.parse import quote
@@ -96,8 +97,14 @@ def get_font_path():
     return str(files('clips2share') / 'fonts')
 
 def main():
+    config_path = getenv('C2S_CONFIG_PATH') if getenv('C2S_CONFIG_PATH') else user_config_dir(appname='clips2share') + '/config.ini'
+    if not isfile(config_path):
+        print(f'config_path {config_path} does not exists, download example config here: '
+              f'https://codeberg.org/c2s/clips2share/src/branch/main/config.ini.example '
+              f'change to your needs and run again!')
+        exit(1)
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read(config_path)
 
     torrent_temp_dir = config['default']['torrent_temp_dir']
     qbittorrent_upload_dir = config['default']['qbittorrent_upload_dir']

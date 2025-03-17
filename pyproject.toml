@@ -4,9 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clips2share"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
     "beautifulsoup4",
+    "platformdirs",
     "requests",
     "torf",
     "vcsi",
