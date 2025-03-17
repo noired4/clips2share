@@ -3,6 +3,7 @@ import configparser
 import requests
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
+from importlib.resources import files
 from os import makedirs, symlink
 from os.path import basename, isfile, splitext
 from shutil import copyfile, move
@@ -91,6 +92,9 @@ def format_tags_with_dots(source_list):
 def print_torrent_hash_process(torrent, filepath, pieces_done, pieces_total):
     print(f'[{filepath}] {pieces_done/pieces_total*100:3.0f} % done')
 
+def get_font_path():
+    return str(files('clips2share') / 'fonts')
+
 def main():
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -152,8 +156,8 @@ def main():
                               end_delay_percent=7, delay_percent=None, grid_spacing=None, grid_horizontal_spacing=5,
                               grid_vertical_spacing=5, vcs_width=1500, grid=vcsi.Grid(x=4, y=4), num_samples=None,
                               show_timestamp=True, metadata_font_size=16,
-                              metadata_font='/usr/share/fonts/TTF/DejaVuSans-Bold.ttf', timestamp_font_size=12,
-                              timestamp_font='/usr/share/fonts/TTF/DejaVuSans.ttf', metadata_position='top',
+                              metadata_font=get_font_path() + '/DejaVuSans-Bold.ttf', timestamp_font_size=12,
+                              timestamp_font=get_font_path() + '/DejaVuSans.ttf', metadata_position='top',
                               background_color=vcsi.Color(r=0, g=0, b=0, a=255),
                               metadata_font_color=vcsi.Color(r=255, g=255, b=255, a=255),
                               timestamp_font_color=vcsi.Color(r=255, g=255, b=255, a=255),
