@@ -17,7 +17,7 @@ Install clips2share with pip
 pip install clips2share
 ```
 
-Run clips2share from commandline
+And make sure that ffmpeg is installed, then run clips2share from commandline:
 
 ```bash
 clips2share
