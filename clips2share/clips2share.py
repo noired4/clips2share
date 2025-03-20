@@ -196,55 +196,54 @@ def main():
         t._metainfo['metadata']['category'] = tracker.category
         t._metainfo['metadata']['cover url'] = header_image_link
         t._metainfo['metadata']['taglist'] = format_tags_with_dots(clip.keywords + static_tags)
-        t._metainfo['metadata']['description'] = f'''
-        [table=852px,nball]
-        [tr=gradient:to right;#0000 5%;#000000;#000000;#0000 95%]
-        [td=90%][align=center][color=#f4f4f4][b][size=5]{clip.studio} - {clip.title}[/size][/b][/color][/align][/td]
-        [/tr]
-        [/table]
-        [align=center][img=800]{header_image_link}[/img][/align]
-        
-        
-        
-        [hr][hr]
-        
-        
-        [table=852px,nball]
-        [tr=gradient:to right;#0000 15%;#000000;#000000;#0000 85%]
-        [td=90%][align=center][color=#f4f4f4][b][size=3]DETAILS[/size][/b][/color][/align][/td]
-        [/tr]
-        [/table]
-        
-        [table=nball,45%]
-        [tr][td=10%][size=2][center][u][b]Resolution[/b][/u][/center][/size] [center][img]https://jerking.empornium.ph/images/2018/03/16/resolution.png[/img]
-        [size=2]{clip.resolution}[/size][/center] [/td][td=10%][size=2][center][u][b]Duration[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2018/03/16/duration.png[/img]
-        [size=2]{clip.duration}[/size][/center] [/td][td=10%][size=2][center][u][b]Production Date[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2018/03/16/duration.png[/img]
-        [size=2]{clip.date}[/size][/center] [/td][td=10%][size=2][center][u][b]Format[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2018/03/16/format.png[/img]
-        [size=2]{clip.format}[/size][/center] [/td][td=10%][size=2][center][u][b]Size[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2017/05/29/size.png[/img]
-        [size=2]{clip.size}[/size][/center]
-        [/td]
-        [/tr]
-        [/table]
-        
-        [table=60%,nball]
-        [tr][td][size=2]
-        {clip.description}
-        Price: {clip.price}
-        [/size][/td]
-        [/tr]
-        [/table]
-        
-        
-        [hr][hr]
-        
-        
-        [table=nball]
-        [tr=gradient:to right;#0000 15%;#000000;#000000;#0000 85%]
-        [td=90%][align=center][color=#f4f4f4][b][size=3]SCREENSHOTS[/size][/b][/color][/align][/td]
-        [/tr]
-        [/table]
-        [align=center][img=1100]{thumbnail_image_link}[/img][/align]
-        '''
+        t._metainfo['metadata']['description'] = f'''[table=852px,nball]
+[tr=gradient:to right;#0000 5%;#000000;#000000;#0000 95%]
+[td=90%][align=center][color=#f4f4f4][b][size=5]{clip.studio} - {clip.title}[/size][/b][/color][/align][/td]
+[/tr]
+[/table]
+[align=center][img=800]{header_image_link}[/img][/align]
+
+
+
+[hr][hr]
+
+
+[table=852px,nball]
+[tr=gradient:to right;#0000 15%;#000000;#000000;#0000 85%]
+[td=90%][align=center][color=#f4f4f4][b][size=3]DETAILS[/size][/b][/color][/align][/td]
+[/tr]
+[/table]
+
+[table=nball,45%]
+[tr][td=10%][size=2][center][u][b]Resolution[/b][/u][/center][/size] [center][img]https://jerking.empornium.ph/images/2018/03/16/resolution.png[/img]
+[size=2]{clip.resolution}[/size][/center] [/td][td=10%][size=2][center][u][b]Duration[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2018/03/16/duration.png[/img]
+[size=2]{clip.duration}[/size][/center] [/td][td=10%][size=2][center][u][b]Production Date[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2018/03/16/duration.png[/img]
+[size=2]{clip.date}[/size][/center] [/td][td=10%][size=2][center][u][b]Format[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2018/03/16/format.png[/img]
+[size=2]{clip.format}[/size][/center] [/td][td=10%][size=2][center][u][b]Size[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2017/05/29/size.png[/img]
+[size=2]{clip.size}[/size][/center]
+[/td]
+[/tr]
+[/table]
+
+[table=60%,nball]
+[tr][td][size=2]
+{clip.description}
+Price: {clip.price}
+[/size][/td]
+[/tr]
+[/table]
+
+
+[hr][hr]
+
+
+[table=nball]
+[tr=gradient:to right;#0000 15%;#000000;#000000;#0000 85%]
+[td=90%][align=center][color=#f4f4f4][b][size=3]SCREENSHOTS[/size][/b][/color][/align][/td]
+[/tr]
+[/table]
+[align=center][img=1100]{thumbnail_image_link}[/img][/align]
+'''
         print(f'creating torrent for {tracker.source_tag}... {t}')
         t.generate(callback=print_torrent_hash_process, interval=1)
         t.write(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
