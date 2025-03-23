@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clips2share"
-version = "0.0.6"
+version = "0.0.7"
 dependencies = [
     "beautifulsoup4",
     "platformdirs",
@@ -16,7 +16,7 @@ requires-python = ">=3.8"
 authors = [
     {name = "c2s"},
 ]
-description = "Create a torrent including metadata from a c4s link"
+description = "Helper for creating adult torrents"
 readme = "README.md"
 keywords = ["torrent", "clips4sale", "thumbnail"]
 classifiers = [

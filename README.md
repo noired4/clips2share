@@ -73,12 +73,12 @@ https://www.clips4sale.com/clips/search/my_video/category/0/storesPage/1/clipsPa
 
 C4S Url: https://www.clips4sale.com/studio/12345/54321/my-video-1080p
 
-C4SData(title='My Video 1080p', studio='C4S Studio', price='$14.99 USD', date='3/1/25 1:23 AM', duration='15 min', size='1693 MB', format='mp4', resolution='1080p', description='The C4S Clip Description', category='POV', related_categories=['Glove', 'Leather Gloves', 'Play'], keywords=['Straight', 'POV'], url='https://www.clips4sale.com/studio/12345/54321/my-video-1080p', image_url='https://imagecdn.clips4sale.com/accounts123/254321/clip_images/previewlg_12345.jpg')
+C4SData(title='My Video 1080p', studio='C4S Studio', price='$14.99 USD', date='3/1/25 1:23 AM', duration='15 min', size='1693 MB', format='mp4', resolution='1080p', description='The C4S Clip Description', category='POV', related_categories=['Glove', 'Leather Gloves', 'Play'], keywords=['Straight', 'POV'], url='https://www.clips4sale.com/studio/12345/54321/my-video-1080p', image_url='https://imagecdn.clips4sale.com/accounts123/54321/clip_images/previewlg_12345.jpg')
 Processing /tmp/my_video.mp4...
 Sampling... 16/16
 Composing contact sheet...
 Cleaning up temporary files...
-creating torrent for Emp... Torrent(path=PosixPath('/tmp/upload/my_video'), name='', trackers=[['http://tracker.empornium.sx:2710/yourpasskey/announce']], private=True, source='Emp', piece_size=2097152)
+creating torrent for Emp... Torrent(path=PosixPath('/tmp/upload/my_video'), name='My Video 1080p', trackers=[['http://tracker.empornium.sx:2710/yourpasskey/announce']], private=True, source='Emp', piece_size=2097152)
 [/tmp/upload/my_video]   0 % done
 [/tmp/upload/my_video] 100 % done
 upload torrent to tracker Emp, than hit enter to autoload to qBittorrent...
