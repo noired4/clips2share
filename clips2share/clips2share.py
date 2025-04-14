@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 from importlib.resources import files
-from os import getenv, makedirs, symlink
+from os import getenv, makedirs, symlink, link
 from os.path import basename, isfile, splitext
 from platformdirs import user_config_dir
 from shutil import copyfile, move
@@ -111,6 +111,7 @@ def main():
     qbittorrent_watch_dir = config['default']['qbittorrent_watch_dir']
     static_tags = config['default']['static_tags'].split()
     delayed_seed = config['default'].getboolean('delayed_seed')
+    use_hardlinks = config['default'].getboolean('use_hardlinks', fallback=False)
 
     # Read Tracker from config sections
     tracker_sections = [s for s in config.sections()
@@ -142,11 +143,15 @@ def main():
     # Create dir structure
     makedirs(target_dir + '/images')
 
-    # Copy video file to upload dir
-    # copyfile(video_path, f'{target_dir}/{clip.studio} - {clip.title}{splitext(video_path)[1]}')
+    target_file_path = f'{target_dir}/{clip.studio} - {clip.title}{splitext(video_path)[1]}'
 
-    # Symlink video file to upload dir
-    symlink(src=video_path, dst=f'{target_dir}/{clip.studio} - {clip.title}{splitext(video_path)[1]}')
+    # Create hardlink or symlink to video file in upload dir
+    if use_hardlinks:
+        print(f"Creating hardlink: {target_file_path}")
+        link(src=video_path, dst=target_file_path)
+    else:
+        print(f"Creating symlink: {target_file_path}")
+        symlink(src=video_path, dst=target_file_path)
 
     # Download Header Image from C4S
     r = requests.get(clip.image_url)
