@@ -90,11 +90,11 @@ upload torrent to tracker Emp, than hit enter to autoload to qBittorrent...
 
 You can skip interactive prompts by using the following command-line arguments:
 
-| Short | Long        | Type   | Description                                                                   |
-|-------|-------------|--------|-------------------------------------------------------------------------------|
-| -V    | --video     | Path   | Path to the local video file                                                  |
-| -u    | --url       | URL    | Clip Store URL                                                                |
-| -D    | --delay     | Int    | Delay (in seconds) before autoloading the torrent when `delayed_seed` is true |
+| Short | Long            | Type | Description                                                                   |
+|-------|-----------------|------|-------------------------------------------------------------------------------|
+| -V    | --video         | Path | Path to the local video file                                                  |
+| -u    | --url           | URL  | Clip Store URL                                                                |
+| -D    | --delay-seconds | Int  | Delay (in seconds) before autoloading the torrent when `delayed_seed` is true |
 
 ### Example:
 ```bash
