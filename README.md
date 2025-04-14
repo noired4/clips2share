@@ -97,6 +97,20 @@ creating torrent for Emp... Torrent(path=PosixPath('/tmp/upload/my_video'), name
 upload torrent to tracker Emp, than hit enter to autoload to qBittorrent...
 ```
 
+## Command-line Options
+
+You can skip interactive prompts by using the following command-line arguments:
+
+| Short | Long            | Type | Description                                                                   |
+|-------|-----------------|------|-------------------------------------------------------------------------------|
+| -V    | --video         | Path | Path to the local video file                                                  |
+| -u    | --url           | URL  | Clip Store URL                                                                |
+| -D    | --delay-seconds | Int  | Delay (in seconds) before autoloading the torrent when `delayed_seed` is true |
+
+### Example:
+```bash
+clips2share -V "/tmp/my_video.mp4" -u "https://www.clips4sale.com/studio/12345/54321/my-video-1080p" -D 300
+```
 
 ## Environment Variables
 
