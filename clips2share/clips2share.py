@@ -1,6 +1,7 @@
 import argparse
 import configparser
 import requests
+import time
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 from importlib.resources import files
@@ -96,7 +97,15 @@ def print_torrent_hash_process(torrent, filepath, pieces_done, pieces_total):
 def get_font_path():
     return str(files('clips2share') / 'fonts')
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="clips2share CLI")
+    parser.add_argument('-V', '--video', type=str, help="Path to the video file")
+    parser.add_argument('-u', '--url', type=str, help="Clip Store URL")
+    parser.add_argument('-D', '--delay-seconds', type=int, help="Auto-continue delay in seconds after torrent is created")
+    return parser.parse_args()
+
 def main():
+    args = parse_arguments()
     config_path = getenv('C2S_CONFIG_PATH') if getenv('C2S_CONFIG_PATH') else user_config_dir(appname='clips2share') + '/config.ini'
     if not isfile(config_path):
         print(f'config_path {config_path} does not exists, download example config here: '
@@ -125,11 +134,11 @@ def main():
     ]
     print(trackers)
 
-    video_path = input("Video Path: ")
+    video_path = args.video if args.video else input("Video Path: ")
     video_basename = basename(video_path)
     video_clipname = splitext(video_basename)[0]
     print(f'https://www.clips4sale.com/clips/search/{quote(video_clipname)}/category/0/storesPage/1/clipsPage/1')
-    c4s_url = input("C4S Url: ")
+    c4s_url = args.url if args.url else input("C4S Url: ")
 
     if not isfile(video_path):
         print('Video file does not exists: ', video_path)
@@ -163,7 +172,7 @@ def main():
     header_image_link = fapping_empornium_image_upload(target_dir + '/images/header.jpg')
 
     # Create Thumbnail Image (using default vcsi parameters copied from interactive debug run)
-    args = argparse.Namespace(output_path=target_dir + '/images/thumbnail.jpg', config=None,
+    vcsi_args = argparse.Namespace(output_path=target_dir + '/images/thumbnail.jpg', config=None,
                               start_delay_percent=7,
                               end_delay_percent=7, delay_percent=None, grid_spacing=None, grid_horizontal_spacing=5,
                               grid_vertical_spacing=5, vcs_width=1500, grid=vcsi.Grid(x=4, y=4), num_samples=None,
@@ -185,7 +194,7 @@ def main():
                               ignore_errors=False, no_overwrite=False, exclude_extensions=[], fast=False,
                               thumbnail_output_path=None, actual_size=False, timestamp_format='{TIME}',
                               timestamp_position=vcsi.TimestampPosition.se)
-    vcsi.process_file(f'{target_dir}/{clip.studio} - {clip.title}{splitext(video_path)[1]}', args=args)
+    vcsi.process_file(f'{target_dir}/{clip.studio} - {clip.title}{splitext(video_path)[1]}', args=vcsi_args)
     thumbnail_image_link = fapping_empornium_image_upload(target_dir + '/images/thumbnail.jpg')
 
     # Create Torrents
@@ -253,7 +262,11 @@ Price: {clip.price}
         t.generate(callback=print_torrent_hash_process, interval=1)
         t.write(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
         if delayed_seed:
-            input(f'upload torrent to tracker {tracker.source_tag}, than hit enter to autoload to qBittorrent...')
+            if args.delay_seconds:
+                print(f'Upload torrent to tracker {tracker.source_tag}. Waiting {args.delay_seconds} seconds before autoloading to qBittorrent...')
+                time.sleep(args.delay_seconds)
+            else:
+                input(f'Upload torrent to tracker {tracker.source_tag}, then hit Enter to autoload to qBittorrent...')
         move(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent',
              f'{qbittorrent_watch_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
         print('done...')
