@@ -7,7 +7,7 @@ from importlib.resources import files
 from os import getenv, makedirs, symlink, link
 from os.path import basename, isfile, splitext
 from platformdirs import user_config_dir
-from shutil import copyfile, move
+from shutil import move
 from torf import Torrent
 from urllib.parse import quote
 from vcsi import vcsi
