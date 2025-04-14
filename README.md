@@ -37,6 +37,7 @@ qbittorrent_upload_dir = /home/user/qBittorrent/Uploads/
 qbittorrent_watch_dir = /home/user/qBittorrent/Uploads/_autoadd/
 static_tags = clips4sale.com
 delayed_seed = True
+use_hardlinks = True
 
 [tracker:empornium]
 announce_url = http://tracker.empornium.sx:2710/YOURPASSKEY/announce
@@ -51,6 +52,7 @@ category = Straight
 | qbittorrent_watch_dir  | Directory where the torrent is moved to get automatically seeded                                |
 | static_tags            | Tags to be added to every torrent                                                               |
 | delayed_seed           | If true, wait for user input and delay seed to prevent announcing an unknown torrent to tracker |
+| use_hardlinks          | If true, creates hard links instead of symlinks for the video file                              |
 
 | Tracker Settings | Description                                      |
 |------------------|--------------------------------------------------|
