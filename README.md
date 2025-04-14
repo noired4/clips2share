@@ -99,6 +99,7 @@ You can skip interactive prompts by using the following command-line arguments:
 ### Example:
 ```bash
 clips2share -V "/tmp/my_video.mp4" -u "https://www.clips4sale.com/studio/12345/54321/my-video-1080p" -D 300
+```
 
 ## Environment Variables
 
