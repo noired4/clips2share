@@ -11,7 +11,8 @@ from shutil import copyfile, move
 from torf import Torrent
 from urllib.parse import quote
 from vcsi import vcsi
-
+from requests.auth import HTTPBasicAuth
+from urllib.parse import urlparse
 
 @dataclass
 class Tracker:
@@ -111,6 +112,20 @@ def main():
     qbittorrent_watch_dir = config['default']['qbittorrent_watch_dir']
     static_tags = config['default']['static_tags'].split()
     delayed_seed = config['default'].getboolean('delayed_seed')
+    
+    # qBittorrent API configuration
+    use_qb_api = config['default'].getboolean('use_qbittorrent_api', fallback=False)
+    qb_url = config['default'].get('qbittorrent_api_url', fallback=None)
+    qb_category = config['default'].get('qbittorrent_category', fallback="Upload")
+
+    if use_qb_api:
+        if not qb_url:
+            print("Error: useQbittorrentApi is enabled, but qbittorrentApiUrl is not set in the config.")
+            exit(2)
+
+        parsed = urlparse(qb_url)
+        base_url = f"{parsed.scheme}://{parsed.hostname}:{parsed.port}"
+        auth = HTTPBasicAuth(parsed.username, parsed.password) if parsed.username else None
 
     # Read Tracker from config sections
     tracker_sections = [s for s in config.sections()
@@ -249,8 +264,30 @@ Price: {clip.price}
         t.write(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
         if delayed_seed:
             input(f'upload torrent to tracker {tracker.source_tag}, than hit enter to autoload to qBittorrent...')
-        move(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent',
-             f'{qbittorrent_watch_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
+
+        torrent_filename = f'{tracker.source_tag}]{clip.studio} - {clip.title}.torrent'
+        torrent_path = f'{torrent_temp_dir}[{torrent_filename}'
+        watch_target = f'{qbittorrent_watch_dir}[{torrent_filename}'
+
+        if use_qb_api:
+            print(f"Uploading {torrent_filename} via qBittorrent API...")
+            try:
+                with open(torrent_path, 'rb') as torrent_file:
+                    response = requests.post(f"{base_url}/api/v2/torrents/add", files={
+                        "torrents": torrent_file
+                    }, data={
+                        "savepath": qbittorrent_upload_dir,
+                        "category": qb_category or ""
+                    }, auth=auth)
+                    response.raise_for_status()
+                    print("Upload successful.")
+            except Exception as e:
+                print("API upload failed:", e)
+                exit(3)
+        else:
+            print(f"Using watch folder: {watch_target}")
+            move(torrent_path, watch_target)
+
         print('done...')
 
 
