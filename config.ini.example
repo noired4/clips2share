@@ -8,6 +8,11 @@ use_hardlinks = True
 use_torznab = true ; this will override delayed_seed and delay-seconds parameters and use Prowlarr to search for torrent uploads
 torznab_poll_interval = 30 ; poll interval for torznab (default: 30 seconds)
 
+[client:qbittorrent]
+use_api = true
+url = http://user:pass@127.0.0.1:8080
+category = Upload
+
 [tracker:empornium]
 announce_url = http://tracker.empornium.sx:2710/YOURPASSKEY/announce
 source_tag = Emp
