@@ -38,11 +38,14 @@ qbittorrent_watch_dir = /home/user/qBittorrent/Uploads/_autoadd/
 static_tags = clips4sale.com
 delayed_seed = True
 use_hardlinks = True
+use_torznab = False
+torznab_poll_interval = 30
 
 [tracker:empornium]
 announce_url = http://tracker.empornium.sx:2710/YOURPASSKEY/announce
 source_tag = Emp
 category = Straight
+torznab_url = http://127.0.0.1:9696/1/api?apikey=YOUR_PROWLARR_API_KEY
 ```
 
 | Default Settings       | Description                                                                                     |
@@ -53,12 +56,14 @@ category = Straight
 | static_tags            | Tags to be added to every torrent                                                               |
 | delayed_seed           | If true, wait for user input and delay seed to prevent announcing an unknown torrent to tracker |
 | use_hardlinks          | If true, creates hard links instead of symlinks for the video file                              |
+| use_torznab            | If true, uses Prowlarr search instead of waiting for user input to delay seed                   |
 
 | Tracker Settings | Description                                      |
 |------------------|--------------------------------------------------|
 | announce_url     | Tracker announce url                             |
 | source_tag       | Tracker specific source tag added to the torrent |
 | category         | Tracker specific category, added as tag          |
+| torznab_url      | Tracker torznab url from your Prowlarr           |
 
 
 ## Usage/Examples

@@ -5,8 +5,11 @@ qbittorrent_watch_dir = /home/user/qBittorrent/Uploads/_autoadd/
 static_tags = clips4sale.com
 delayed_seed = True
 use_hardlinks = True
+use_torznab = true ; this will override delayed_seed and delay-seconds parameters and use Prowlarr to search for torrent uploads
+torznab_poll_interval = 30 ; poll interval for torznab (default: 30 seconds)
 
 [tracker:empornium]
 announce_url = http://tracker.empornium.sx:2710/YOURPASSKEY/announce
 source_tag = Emp
 category = Straight
+torznab_url = http://127.0.0.1:9696/1/api?apikey=YOUR_PROWLARR_API_KEY ; Optional, provide this for searching for your uploaded torrents via Torznab URLs

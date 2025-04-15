@@ -2,6 +2,7 @@ import argparse
 import configparser
 import requests
 import time
+import torznab
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 from importlib.resources import files
@@ -19,6 +20,7 @@ class Tracker:
     announce_url: str
     category: str
     source_tag: str
+    torznab_url: str
 
 @dataclass
 class C4SData:
@@ -121,6 +123,12 @@ def main():
     static_tags = config['default']['static_tags'].split()
     delayed_seed = config['default'].getboolean('delayed_seed')
     use_hardlinks = config['default'].getboolean('use_hardlinks', fallback=False)
+    use_torznab = config['default'].getboolean('use_torznab', fallback=False)
+    torznab_poll_interval = config['default'].getint('torznab_poll_interval', fallback=30)
+
+    if(torznab_poll_interval < 1):
+        print('torznab_poll_interval must be greater than 0')
+        exit(2)
 
     # Read Tracker from config sections
     tracker_sections = [s for s in config.sections()
@@ -129,7 +137,8 @@ def main():
     trackers = [
         Tracker(announce_url=config[s]['announce_url'],
                 category=config[s].get('category'),
-                source_tag=config[s]['source_tag']
+                source_tag=config[s]['source_tag'],
+                torznab_url=config[s]['torznab_url']
                 ) for s in tracker_sections
     ]
     print(trackers)
@@ -258,10 +267,31 @@ Price: {clip.price}
 [/table]
 [align=center][img=1100]{thumbnail_image_link}[/img][/align]
 '''
-        print(f'creating torrent for {tracker.source_tag}... {t}')
+        print(f'Creating torrent for {tracker.source_tag}... {t}')
         t.generate(callback=print_torrent_hash_process, interval=1)
         t.write(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
-        if delayed_seed:
+        torrent_title = f'{clip.studio} - {clip.title}'
+        if use_torznab:
+            try:
+                print(f'[{tracker.source_tag}] Checking for existing torrents...')
+                existing_url = torznab.poll_for_torrent(tracker.source_tag, tracker.torznab_url, torrent_title, 0, 1)
+                if existing_url:
+                    print(f'[{tracker.source_tag}] Torrent already exists on tracker, skipping upload.')
+                    continue
+            except TimeoutError:
+                print(f'[{tracker.source_tag}] No existing torrents found.')
+            except Exception as e:
+                print(f'[{tracker.source_tag}] Error while polling for existing torrent: {e}')
+                exit(4)
+            
+            print(f'[{tracker.source_tag}] Upload torrent to tracker, then wait for it to be indexed...')
+            try:
+                torrent_url = torznab.poll_for_torrent(tracker.source_tag, tracker.torznab_url, torrent_title, torznab_poll_interval)
+                print(f'[{tracker.source_tag}] Found torrent on tracker: {torrent_url}')
+            except Exception as e:
+                print(f'Error while polling for torrent: {e}')
+                exit(4)
+        elif delayed_seed:
             if args.delay_seconds:
                 print(f'Upload torrent to tracker {tracker.source_tag}. Waiting {args.delay_seconds} seconds before autoloading to qBittorrent...')
                 time.sleep(args.delay_seconds)
