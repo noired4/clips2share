@@ -15,6 +15,7 @@ from urllib.parse import quote
 from vcsi import vcsi
 from requests.auth import HTTPBasicAuth
 from urllib.parse import urlparse
+from pathlib import Path
 
 @dataclass
 class Tracker:
@@ -97,7 +98,7 @@ def print_torrent_hash_process(torrent, filepath, pieces_done, pieces_total):
     print(f'[{filepath}] {pieces_done/pieces_total*100:3.0f} % done')
 
 def get_font_path():
-    return str(files('clips2share') / 'fonts')
+    return str(Path(__file__).parent / 'fonts')
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="clips2share CLI")
