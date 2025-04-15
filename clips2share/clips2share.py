@@ -1,5 +1,6 @@
 import argparse
 import configparser
+import os
 import requests
 import time
 import qbittorrent_client
@@ -296,6 +297,11 @@ Price: {clip.price}
                     savepath=qbittorrent_upload_dir,
                 )
                 print("API Upload successful.")
+                # Clean up the temporary torrent file after successful upload
+                try:
+                    os.remove(torrent_path)
+                except OSError as e:
+                    print(f"Error removing temp torrent {torrent_path}: {e}")
             except Exception as e:
                 print("API upload failed:", e)
                 exit(3)
