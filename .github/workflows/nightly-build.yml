@@ -1,0 +1,74 @@
+name: Nightly Build and Sync
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Every day at 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  sync-build-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v3
+
+      - name: Configure Git with no-reply email
+        run: |
+          git config --global user.name "noired"
+          git config --global user.email "noired@users.noreply.codeberg.org"
+
+      - name: Add Codeberg remote and fetch updates
+        run: |
+          git remote add codeberg https://codeberg.org/noired/clips2share.git
+          git fetch codeberg
+
+      - name: Sync branches from Codeberg to GitHub
+        run: |
+          for branch in $(git branch -r | grep codeberg/ | sed 's|codeberg/||'); do
+            git checkout -B "$branch" "codeberg/$branch"
+            git push origin "$branch" --force
+          done
+
+      - name: Inject GitHub-only disclaimer into README.md
+        run: |
+          disclaimer="> 📦 This is a GitHub mirror of the [original clips2share repository on Codeberg](https://codeberg.org/c2s/clips2share).\n>\n> Please [file issues](https://codeberg.org/c2s/clips2share/issues) and [submit pull requests](https://codeberg.org/c2s/clips2share/pulls) **on Codeberg, not here**."
+
+          for branch in $(git branch | sed 's/*//'); do
+            git checkout "$branch"
+
+            if [ -f README.md ] && ! grep -q "This is a GitHub mirror" README.md; then
+              awk -v d="$disclaimer" '
+                /^# / {
+                  print;
+                  print "";
+                  print d;
+                  next
+                }
+                { print }
+              ' README.md > README.tmp && mv README.tmp README.md
+              git add README.md
+              git commit -m "Inject GitHub-only disclaimer into README.md" || echo "No changes to commit"
+              git push origin "$branch"
+            fi
+          done
+
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image from dev/integration
+        run: |
+          git checkout dev/integration
+          docker build -t clips2share:dev .
+          docker tag clips2share:dev ghcr.io/noired4/clips2share:dev
+
+      - name: Push Docker image to GHCR
+        run: docker push ghcr.io/noired4/clips2share:dev
