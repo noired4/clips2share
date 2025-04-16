@@ -141,7 +141,8 @@ def main():
         if not qb_url:
             print("Error: use_qbittorrent_api is enabled, but qbittorrent_url is not set in the config.")
             exit(2)
-        qbittorrent_client.configure(qb_url)
+    
+    client = qbittorrent_client.QBittorrentClient(qb_url)
 
     # Read Tracker from config sections
     tracker_sections = [s for s in config.sections()
@@ -298,7 +299,7 @@ Price: {clip.price}
             try:
                 with open(torrent_path, 'rb') as f:
                     torrent_bytes = f.read()
-                qbittorrent_client.send_torrent(
+                client.send_torrent(
                     torrent_bytes=torrent_bytes,
                     name=torrent_name,
                     category=qb_category,
