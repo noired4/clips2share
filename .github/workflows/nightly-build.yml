@@ -38,24 +38,17 @@ jobs:
         run: |
           disclaimer="> 📦 This is a GitHub mirror of the [original clips2share repository on Codeberg](https://codeberg.org/c2s/clips2share).\n>\n> Please [file issues](https://codeberg.org/c2s/clips2share/issues) and [submit pull requests](https://codeberg.org/c2s/clips2share/pulls) **on Codeberg, not here**."
 
-          for branch in $(git branch | sed 's/*//'); do
-            git checkout "$branch"
-
-            if [ -f README.md ] && ! grep -q "This is a GitHub mirror" README.md; then
-              awk -v d="$disclaimer" '
-                /^# / {
-                  print;
-                  print "";
-                  print d;
-                  next
-                }
-                { print }
-              ' README.md > README.tmp && mv README.tmp README.md
-              git add README.md
-              git commit -m "Inject GitHub-only disclaimer into README.md" || echo "No changes to commit"
-              git push origin "$branch"
-            fi
-          done
+          if [ -f README.md ] && ! grep -q "This is a GitHub mirror" README.md; then
+            awk -v d="$disclaimer" '
+              /^# / {
+                print;
+                print "";
+                print d;
+                next
+              }
+              { print }
+            ' README.md > README.tmp && mv README.tmp README.md
+          fi
 
       - name: Check for recent commits in dev/integration
         id: recent_changes
