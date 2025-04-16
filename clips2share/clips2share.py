@@ -3,7 +3,6 @@ import configparser
 import os
 import requests
 import time
-import qbittorrent_client
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 from importlib.resources import files
@@ -14,6 +13,7 @@ from shutil import move
 from torf import Torrent
 from urllib.parse import quote
 from vcsi import vcsi
+from clips2share import qbittorrent_client
 
 @dataclass
 class Tracker:
