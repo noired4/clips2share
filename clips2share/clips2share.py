@@ -15,8 +15,6 @@ from shutil import move
 from torf import Torrent
 from urllib.parse import quote
 from vcsi import vcsi
-from requests.auth import HTTPBasicAuth
-from urllib.parse import urlparse
 
 @dataclass
 class Tracker:
