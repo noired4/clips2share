@@ -25,7 +25,7 @@ jobs:
       - name: Add Codeberg remote and fetch updates
         run: |
           git remote add codeberg https://codeberg.org/noired/clips2share.git
-          git fetch codeberg
+          git fetch codeberg --tags --prune
 
       - name: Sync branches from Codeberg to GitHub
         run: |
@@ -57,6 +57,28 @@ jobs:
             fi
           done
 
+      - name: Check for recent commits in dev/integration
+        id: recent_changes
+        run: |
+          git checkout dev/integration
+          COMMITS=$(git log --since="1 day ago" --pretty=oneline)
+          echo "Found commits:"
+          echo "$COMMITS"
+          if [ -z "$COMMITS" ]; then
+            echo "No recent commits in the last 24 hours."
+            echo "skip_build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Recent changes detected."
+            echo "skip_build=false" >> "$GITHUB_OUTPUT"
+          fi
+       
+      - name: Build Docker image from dev/integration
+        if: steps.recent_changes.outputs.skip_build == 'false'
+        run: |
+          git checkout dev/integration
+          docker build -t clips2share:dev .
+          docker tag ghcr.io/noired4/clips2share:dev
+
       - name: Log in to GitHub Container Registry (GHCR)
         uses: docker/login-action@v3
         with:
@@ -64,11 +86,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image from dev/integration
-        run: |
-          git checkout dev/integration
-          docker build -t clips2share:dev .
-          docker tag clips2share:dev ghcr.io/noired4/clips2share:dev
-
       - name: Push Docker image to GHCR
+        if: steps.recent_changes.outputs.skip_build == 'false'
         run: docker push ghcr.io/noired4/clips2share:dev
