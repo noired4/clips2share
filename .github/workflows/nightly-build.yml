@@ -29,10 +29,10 @@ jobs:
 
       - name: Sync branches from Codeberg to GitHub
         run: |
-          for branch in $(git branch -r | grep codeberg/ | sed 's|codeberg/||'); do
+          for branch in $(git branch -r | grep codeberg/ | grep -v 'HEAD' | sed 's|codeberg/||'); do
             git checkout -B "$branch" "codeberg/$branch"
             git push origin "$branch" --force
-          done
+          done 
 
       - name: Inject GitHub-only disclaimer into README.md
         run: |
