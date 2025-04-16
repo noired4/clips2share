@@ -34,6 +34,8 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 COPY . .
 
+RUN pip install . --no-cache-dir --root-user-action=ignore
+
 ENV C2S_CONFIG_PATH=/config/config.ini
 
 ENTRYPOINT ["python", "-u", "-m", "clips2share.clips2share"]
