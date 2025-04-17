@@ -32,7 +32,7 @@ Repository = "https://codeberg.org/c2s/clips2share.git"
 "Bug Tracker" = "https://codeberg.org/c2s/clips2share/issues"
 
 [project.scripts]
-clips2share = "clips2share.clips2share:main"
+clips2share = "clips2share.cli:main"
 
 [tool.setuptools.package-data]
 clips2share = ["fonts/*.ttf"]
