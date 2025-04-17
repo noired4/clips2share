@@ -125,7 +125,7 @@ def main():
     
     # qBittorrent API configuration
     if config.has_section('client:qbittorrent'):
-        use_qb_api = config.get['client:qbittorrent'].getboolean('use_api', fallback=False)
+        use_qb_api = config['client:qbittorrent'].getboolean('use_api', fallback=False)
         qb_url = config['client:qbittorrent'].get('url', fallback=None)
         qb_category = config['client:qbittorrent'].get('category', fallback="Upload")
     else:
