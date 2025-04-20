@@ -23,26 +23,27 @@ And make sure that ffmpeg is installed, then run clips2share from commandline:
 clips2share
 ```
 
-The first run will tell you to download and install the config.ini to your 'user_config_dir'. 
+The first run will tell you to download and install the config.toml to your 'user_config_dir'.
 
 
 ## Configuration
 
-This is an example config.ini
+This is an example config.toml
 
-```ini
+```toml
 [default]
-torrent_temp_dir = /home/user/qBittorrent/
-qbittorrent_upload_dir = /home/user/qBittorrent/Uploads/
-qbittorrent_watch_dir = /home/user/qBittorrent/Uploads/_autoadd/
-static_tags = clips4sale.com
-delayed_seed = True
-use_hardlinks = True
+torrent_temp_dir = "/home/user/qBittorrent/"
+qbittorrent_upload_dir = "/home/user/qBittorrent/Uploads/"
+qbittorrent_watch_dir = "/home/user/qBittorrent/Uploads/_autoadd/"
+static_tags = ["clips4sale.com"]
+delayed_seed = true
+use_hardlinks = true
 
-[tracker:empornium]
-announce_url = http://tracker.empornium.sx:2710/YOURPASSKEY/announce
-source_tag = Emp
-category = Straight
+[tracker.empornium]
+announce_url = "http://tracker.empornium.sx:2710/YOURPASSKEY/announce"
+source_tag = "Emp"
+category = "Straight"
+
 ```
 
 | Default Settings       | Description                                                                                     |
@@ -105,7 +106,7 @@ clips2share -V "/tmp/my_video.mp4" -u "https://www.clips4sale.com/studio/12345/5
 
 This optional environment variable allows to overwrite the path to the config (will be preferred instead of the user_config_dir)
 
-`C2S_CONFIG_PATH`: `/path/to/config.ini`
+`C2S_CONFIG_PATH`: `/path/to/config.toml`
 
 
 
@@ -117,4 +118,3 @@ Contributions are always welcome!
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
