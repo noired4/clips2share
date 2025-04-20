@@ -3,3 +3,4 @@ platformdirs
 requests
 torf
 vcsi
+tomllib
