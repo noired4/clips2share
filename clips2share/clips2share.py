@@ -1,5 +1,5 @@
 import argparse
-import configparser
+import tomllib
 import requests
 import time
 from bs4 import BeautifulSoup
@@ -106,25 +106,25 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
-    config_path = getenv('C2S_CONFIG_PATH') if getenv('C2S_CONFIG_PATH') else user_config_dir(appname='clips2share') + '/config.ini'
+    config_path = getenv('C2S_CONFIG_PATH') if getenv('C2S_CONFIG_PATH') else user_config_dir(appname='clips2share') + '/config.toml'
     if not isfile(config_path):
-        print(f'config_path {config_path} does not exists, download example config here: '
-              f'https://codeberg.org/c2s/clips2share/src/branch/main/config.ini.example '
+        print(f'config_path {config_path} does not exist, download example config here: '
+              f'https://codeberg.org/c2s/clips2share/src/branch/main/config.toml.example '
               f'change to your needs and run again!')
         exit(1)
-    config = configparser.ConfigParser()
-    config.read(config_path)
+    with open(config_path, 'rb') as f:
+        config = tomllib.load(f)
 
     torrent_temp_dir = config['default']['torrent_temp_dir']
     qbittorrent_upload_dir = config['default']['qbittorrent_upload_dir']
     qbittorrent_watch_dir = config['default']['qbittorrent_watch_dir']
-    static_tags = config['default']['static_tags'].split()
-    delayed_seed = config['default'].getboolean('delayed_seed')
-    use_hardlinks = config['default'].getboolean('use_hardlinks', fallback=False)
+    static_tags = config['default']['static_tags']
+    delayed_seed = config['default']['delayed_seed']
+    use_hardlinks = config['default'].get('use_hardlinks', False)  # Default to False if not present
 
     # Read Tracker from config sections
-    tracker_sections = [s for s in config.sections()
-                        if s.startswith('tracker:')]
+    tracker_sections = [s for s in config.keys()
+                       if s.startswith('tracker.')]
 
     trackers = [
         Tracker(announce_url=config[s]['announce_url'],
