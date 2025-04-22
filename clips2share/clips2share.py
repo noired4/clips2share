@@ -1,9 +1,17 @@
+# Support for direct script execution
+# This is a workaround for running the script directly without installing it as a package.
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + "/.."))
+
+# End of workaround
+
 import argparse
 import configparser
 import os
 import requests
 import time
-import qbittorrent_client
 import torznab
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
@@ -15,6 +23,7 @@ from shutil import move
 from torf import Torrent
 from urllib.parse import quote
 from vcsi import vcsi
+from clips2share import qbittorrent_client
 
 @dataclass
 class Tracker:
@@ -126,15 +135,18 @@ def main():
     use_hardlinks = config['default'].getboolean('use_hardlinks', fallback=False)
     
     # qBittorrent API configuration
-    use_qb_api = config['client:qbittorrent'].getboolean('use_api', fallback=False)
-    qb_url = config['client:qbittorrent'].get('url', fallback=None)
-    qb_category = config['client:qbittorrent'].get('category', fallback="Upload")
-
+    if config.has_section('client:qbittorrent'):
+        use_qb_api = config['client:qbittorrent'].getboolean('use_api', fallback=False)
+        qb_url = config['client:qbittorrent'].get('url', fallback=None)
+        qb_category = config['client:qbittorrent'].get('category', fallback="Upload")
+    else:
+        use_qb_api, qb_url, qb_category = None, None, None
     if use_qb_api:
         if not qb_url:
             print("Error: use_qbittorrent_api is enabled, but qbittorrent_url is not set in the config.")
             exit(2)
-        qbittorrent_client.configure(qb_url)
+    
+        qbt_client = qbittorrent_client.QBittorrentClient(qb_url)
     use_torznab = config['default'].getboolean('use_torznab', fallback=False)
     torznab_poll_interval = config['default'].getint('torznab_poll_interval', fallback=30)
 
@@ -319,7 +331,7 @@ Price: {clip.price}
             try:
                 with open(torrent_path, 'rb') as f:
                     torrent_bytes = f.read()
-                qbittorrent_client.send_torrent(
+                qbt_client.send_torrent(
                     torrent_bytes=torrent_bytes,
                     name=torrent_name,
                     category=qb_category,
@@ -335,7 +347,7 @@ Price: {clip.price}
                 print("API upload failed:", e)
                 exit(3)
         else:
-            watch_target = f'{qbittorrent_watch_dir}[{torrent_filename}'
+            watch_target = f'{qbittorrent_watch_dir}{torrent_filename}'
             print(f"Using watch folder: {watch_target}")
             move(torrent_path, watch_target)
 
