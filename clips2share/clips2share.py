@@ -1,3 +1,12 @@
+# Support for direct script execution
+# This is a workaround for running the script directly without installing it as a package.
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + "/.."))
+
+# End of workaround
+
 import argparse
 import configparser
 import os
