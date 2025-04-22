@@ -146,7 +146,7 @@ def main():
             print("Error: use_qbittorrent_api is enabled, but qbittorrent_url is not set in the config.")
             exit(2)
     
-        qbt_client = qbittorrent_client.QBittorrentClient(qb_url)
+    qbt_client = qbittorrent_client.QBittorrentClient(qb_url)
     use_torznab = config['default'].getboolean('use_torznab', fallback=False)
     torznab_poll_interval = config['default'].getint('torznab_poll_interval', fallback=30)
 
