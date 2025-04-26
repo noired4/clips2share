@@ -6,6 +6,11 @@ static_tags = clips4sale.com
 delayed_seed = True
 use_hardlinks = True
 
+[client:qbittorrent]
+use_api = true
+url = http://user:pass@127.0.0.1:8080
+category = Upload
+
 [tracker:empornium]
 announce_url = http://tracker.empornium.sx:2710/YOURPASSKEY/announce
 source_tag = Emp
