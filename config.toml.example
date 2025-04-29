@@ -1,5 +1,5 @@
 [default]
-# Duration (seconds) to wait before seeding torrent.
+# Wait for user input and delay seed to prevent announcing an unknown torrent to tracker
 delayed_seed = true
 # Sets usage of OS file linking to avoid accidental deletion of files
 use_hardlinks = true

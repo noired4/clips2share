@@ -32,12 +32,20 @@ This is an example config.toml
 
 ```toml
 [default]
-torrent_temp_dir = "/home/user/qBittorrent/"
-qbittorrent_upload_dir = "/home/user/qBittorrent/Uploads/"
-qbittorrent_watch_dir = "/home/user/qBittorrent/Uploads/_autoadd/"
-static_tags = ["clips4sale.com"]
+# Wait for user input and delay seed to prevent announcing an unknown torrent to tracker
 delayed_seed = true
+# Sets usage of OS file linking to avoid accidental deletion of files
 use_hardlinks = true
+
+[torrent]
+# Location for staging files during torrent creation
+temporary_directory = "/home/user/temp/"
+
+[tracker]
+# Tags to decorate tracker uploads
+static_tags = ["clips4sale.com"]
+# Location for completed torrents
+upload_directory = "/home/user/uploads/"
 
 [tracker.empornium]
 announce_url = "http://tracker.empornium.sx:2710/YOURPASSKEY/announce"
@@ -48,29 +56,35 @@ category = "Straight"
 use_api = true
 url = "http://user:pass@127.0.0.1:8080"
 category = "Upload"
+watch_directory = "/home/user/uploads/_autoadd/"
 ```
 
 | Default Settings       | Description                                                                                     |
 |------------------------|-------------------------------------------------------------------------------------------------|
-| torrent_temp_dir       | Directory where the torrent is placed, ready to be uploaded to the tracker                      |
-| qbittorrent_upload_dir | Directory where the upload files are created                                                    |
-| qbittorrent_watch_dir  | Directory where the torrent is moved to get automatically seeded                                |
-| static_tags            | Tags to be added to every torrent                                                               |
 | delayed_seed           | If true, wait for user input and delay seed to prevent announcing an unknown torrent to tracker |
 | use_hardlinks          | If true, creates hard links instead of symlinks for the video file                              |
 
-| Client Settings  | Description                                      |
-|------------------|--------------------------------------------------|
-| use_api          | If true, uses client API instead of watch folders|
-| url              | URL for the client with username and password    |
-| category         | Client specific category to assign the torrent   |
+| Torrent Settings    | Description                                                                |
+|---------------------|----------------------------------------------------------------------------|
+| temporary_directory | Directory where the torrent is placed, ready to be uploaded to the tracker |
 
-| Tracker Settings | Description                                      |
-|------------------|--------------------------------------------------|
-| announce_url     | Tracker announce url                             |
-| source_tag       | Tracker specific source tag added to the torrent |
-| category         | Tracker specific category, added as tag          |
+| Tracker Settings (General) | Description                                  |
+|----------------------------|----------------------------------------------|
+| static_tags                | Tags to be added to every torrent            |
+| upload_directory           | Directory where the upload files are created |
 
+| Tracker Settings (Specific) | Description                                      |
+|-----------------------------|--------------------------------------------------|
+| announce_url                | Tracker announce url                             |
+| source_tag                  | Tracker specific source tag added to the torrent |
+| category                    | Tracker specific category, added as tag          |
+
+| Client Settings (Specific) | Description                                                      |
+|----------------------------|------------------------------------------------------------------|
+| use_api                    | If true, uses client API instead of watch folders                |
+| url                        | URL for the client with username and password                    |
+| category                   | Client specific category to assign the torrent                   |
+| watch_directory            | Directory where the torrent is moved to get automatically seeded |
 
 ## Usage/Examples
 Example usage below (user wants to upload /tmp/my_video.mp4 and needs to provide only the path to local clip and the c4s link):
