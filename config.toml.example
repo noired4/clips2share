@@ -1,10 +1,11 @@
 [default]
 torrent_temp_dir = "/home/user/qBittorrent/"
-qbittorrent_upload_dir = "/home/user/qBittorrent/Uploads/"
-qbittorrent_watch_dir = "/home/user/qBittorrent/Uploads/_autoadd/"
 static_tags = ["clips4sale.com"]
 delayed_seed = true
 use_hardlinks = true
+
+[tracker]
+upload_directory = "/home/user/uploads/"
 
 [tracker.empornium]
 announce_url = "http://tracker.empornium.sx:2710/YOURPASSKEY/announce"
@@ -15,3 +16,4 @@ category = "Straight"
 use_api = true
 url = "http://user:pass@127.0.0.1:8080"
 category = "Upload"
+watch_directory = "/home/user/uploads/_autoadd/"
