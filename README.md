@@ -1,8 +1,5 @@
 # clips2share
 
-> 📦 This is a GitHub mirror of the [original clips2share repository on Codeberg](https://codeberg.org/c2s/clips2share).
->
-> Please [file issues](https://codeberg.org/c2s/clips2share/issues) and [submit pull requests](https://codeberg.org/c2s/clips2share/pulls) **on Codeberg, not here**.
 
 Clips2share helps you with the process of creating torrents for uploading adult clips to your favorite torrent tracker:
 
