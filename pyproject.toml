@@ -12,6 +12,8 @@ dependencies = [
     "torf",
     "vcsi",
     "tomllib",
+    "Jinja2",
+    "pathlib",
 ]
 requires-python = ">=3.8"
 authors = [

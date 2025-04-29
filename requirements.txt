@@ -4,3 +4,5 @@ requests
 torf
 vcsi
 tomllib
+Jinja2
+pathlib
