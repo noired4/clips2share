@@ -1,6 +1,10 @@
 [default]
 static_tags = ["clips4sale.com"]
+
+# Duration (seconds) to wait before seeding torrent.
 delayed_seed = true
+
+# Sets usage of OS file linking to avoid accidental deletion of files
 use_hardlinks = true
 
 [torrent]
