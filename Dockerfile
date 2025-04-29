@@ -31,11 +31,16 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
+RUN mkdir -p /config
+
 COPY --from=builder /install /usr/local
 COPY . .
 
 RUN pip install . --no-cache-dir --root-user-action=ignore
 
+ENV PYTHONUNBUFFERED=1
 ENV C2S_CONFIG_PATH=/config/config.ini
 
-ENTRYPOINT ["python", "-u", "-m", "clips2share.clips2share"]
+VOLUME ["/config"]
+
+ENTRYPOINT ["python", "-m", "clips2share.clips2share"]

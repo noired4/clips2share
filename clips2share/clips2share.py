@@ -266,6 +266,7 @@ def main():
         print(f'Creating torrent for {tracker.source_tag}... {t}')
         t.generate(callback=print_torrent_hash_process, interval=1)
         t.write(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
+        print(f'Torrent created in: {torrent_temp_dir}')
         torrent_title = f'{clip.studio} - {clip.title}'
         if use_torznab:
             try:
