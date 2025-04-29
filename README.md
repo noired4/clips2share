@@ -44,10 +44,10 @@ announce_url = "http://tracker.empornium.sx:2710/YOURPASSKEY/announce"
 source_tag = "Emp"
 category = "Straight"
 
-[client:qbittorrent]
+[client.qbittorrent]
 use_api = true
-url = http://user:pass@127.0.0.1:8080
-category = Upload
+url = "http://user:pass@127.0.0.1:8080"
+category = "Upload"
 ```
 
 | Default Settings       | Description                                                                                     |
