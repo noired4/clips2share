@@ -132,10 +132,10 @@ def main():
     use_hardlinks = config['default'].get('use_hardlinks', False)  # Default to False if not present
 
     # qBittorrent API configuration
-    if config.has_section('client:qbittorrent'):
-        use_qb_api = config['client:qbittorrent'].getboolean('use_api', fallback=False)
-        qb_url = config['client:qbittorrent'].get('url', fallback=None)
-        qb_category = config['client:qbittorrent'].get('category', fallback="Upload")
+    if 'client:qbittorrent' in config:
+        use_qb_api = config['client:qbittorrent']['use_api']
+        qb_url = config['client:qbittorrent']['url']
+        qb_category = config['client:qbittorrent']['category']
     else:
         use_qb_api, qb_url, qb_category = None, None, None
     if use_qb_api:
