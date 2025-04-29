@@ -1,3 +1,12 @@
+# Support for direct script execution
+# This is a workaround for running the script directly without installing it as a package.
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + "/.."))
+
+# End of workaround
+
 import argparse
 import tomllib
 import requests
@@ -12,7 +21,7 @@ from shutil import move
 from torf import Torrent
 from urllib.parse import quote
 from vcsi import vcsi
-
+from clips2share import qbittorrent_client
 
 @dataclass
 class Tracker:
@@ -121,6 +130,20 @@ def main():
     static_tags = config['default']['static_tags']
     delayed_seed = config['default']['delayed_seed']
     use_hardlinks = config['default'].get('use_hardlinks', False)  # Default to False if not present
+
+    # qBittorrent API configuration
+    if config.has_section('client:qbittorrent'):
+        use_qb_api = config['client:qbittorrent'].getboolean('use_api', fallback=False)
+        qb_url = config['client:qbittorrent'].get('url', fallback=None)
+        qb_category = config['client:qbittorrent'].get('category', fallback="Upload")
+    else:
+        use_qb_api, qb_url, qb_category = None, None, None
+    if use_qb_api:
+        if not qb_url:
+            print("Error: use_qbittorrent_api is enabled, but qbittorrent_url is not set in the config.")
+            exit(2)
+
+        qbt_client = qbittorrent_client.QBittorrentClient(qb_url)
 
     # Read Tracker from config sections
     tracker_sections = [s for s in config.keys()
@@ -267,8 +290,36 @@ Price: {clip.price}
                 time.sleep(args.delay_seconds)
             else:
                 input(f'Upload torrent to tracker {tracker.source_tag}, then hit Enter to autoload to qBittorrent...')
-        move(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent',
-             f'{qbittorrent_watch_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
+
+        torrent_filename = f'[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent'
+        torrent_path = f'{torrent_temp_dir}{torrent_filename}'
+
+        if use_qb_api:
+            print(f"Uploading {torrent_filename} via qBittorrent API...")
+            torrent_name = f'{clip.studio} - {clip.title}'
+            try:
+                with open(torrent_path, 'rb') as f:
+                    torrent_bytes = f.read()
+                qbt_client.send_torrent(
+                    torrent_bytes=torrent_bytes,
+                    name=torrent_name,
+                    category=qb_category,
+                    savepath=qbittorrent_upload_dir,
+                )
+                print("API Upload successful.")
+                # Clean up the temporary torrent file after successful upload
+                try:
+                    os.remove(torrent_path)
+                except OSError as e:
+                    print(f"Error removing temp torrent {torrent_path}: {e}")
+            except Exception as e:
+                print("API upload failed:", e)
+                exit(3)
+        else:
+            watch_target = f'{qbittorrent_watch_dir}{torrent_filename}'
+            print(f"Using watch folder: {watch_target}")
+            move(torrent_path, watch_target)
+
         print('done...')
 
 

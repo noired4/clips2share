@@ -44,6 +44,10 @@ announce_url = "http://tracker.empornium.sx:2710/YOURPASSKEY/announce"
 source_tag = "Emp"
 category = "Straight"
 
+[client:qbittorrent]
+use_api = true
+url = http://user:pass@127.0.0.1:8080
+category = Upload
 ```
 
 | Default Settings       | Description                                                                                     |
@@ -54,6 +58,12 @@ category = "Straight"
 | static_tags            | Tags to be added to every torrent                                                               |
 | delayed_seed           | If true, wait for user input and delay seed to prevent announcing an unknown torrent to tracker |
 | use_hardlinks          | If true, creates hard links instead of symlinks for the video file                              |
+
+| Client Settings  | Description                                      |
+|------------------|--------------------------------------------------|
+| use_api          | If true, uses client API instead of watch folders|
+| url              | URL for the client with username and password    |
+| category         | Client specific category to assign the torrent   |
 
 | Tracker Settings | Description                                      |
 |------------------|--------------------------------------------------|
