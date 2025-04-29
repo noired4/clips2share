@@ -31,8 +31,7 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-RUN mkdir -p /app/config \
-    ln -s /app/config /config
+RUN mkdir -p /config
 
 COPY --from=builder /install /usr/local
 COPY . .
