@@ -5,11 +5,13 @@ delayed_seed = true
 use_hardlinks = true
 
 [torrent]
+# Location for staging files during torrent creation
 temporary_directory = "/home/user/temp/"
 
 [tracker]
 # Tags to decorate tracker uploads
 static_tags = ["clips4sale.com"]
+# Location for completed torrents
 upload_directory = "/home/user/uploads/"
 
 [tracker.empornium]
