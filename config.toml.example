@@ -1,8 +1,10 @@
 [default]
-torrent_temp_dir = "/home/user/qBittorrent/"
 static_tags = ["clips4sale.com"]
 delayed_seed = true
 use_hardlinks = true
+
+[torrent]
+temporary_directory = "/home/user/temp/"
 
 [tracker]
 upload_directory = "/home/user/uploads/"

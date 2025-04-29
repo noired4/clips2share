@@ -124,9 +124,9 @@ def main():
     with open(config_path, 'rb') as f:
         config = tomllib.load(f)
 
-    torrent_temp_dir = config['default']['torrent_temp_dir']
-    qbittorrent_upload_dir = config['default']['qbittorrent_upload_dir']
-    qbittorrent_watch_dir = config['default']['qbittorrent_watch_dir']
+    torrent_temp_dir = config['torrent']['temporary_directory']
+    upload_dir = config['tracker']['upload_directory']
+    qbittorrent_watch_dir = config['client.qbittorrent']['watch_directory']
     static_tags = config['default']['static_tags']
     delayed_seed = config['default']['delayed_seed']
     use_hardlinks = config['default'].get('use_hardlinks', False)  # Default to False if not present
@@ -170,7 +170,7 @@ def main():
     clip = extract_clip_data(c4s_url)
     print(clip)
 
-    target_dir = qbittorrent_upload_dir + f'{clip.studio} - {clip.title}'
+    target_dir = upload_dir + f'{clip.studio} - {clip.title}'
 
     # Create dir structure
     makedirs(target_dir + '/images')
@@ -304,7 +304,7 @@ Price: {clip.price}
                     torrent_bytes=torrent_bytes,
                     name=torrent_name,
                     category=qb_category,
-                    savepath=qbittorrent_upload_dir,
+                    savepath=upload_dir,
                 )
                 print("API Upload successful.")
                 # Clean up the temporary torrent file after successful upload
