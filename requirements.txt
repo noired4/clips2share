@@ -3,3 +3,5 @@ platformdirs
 requests
 torf
 vcsi
+Jinja2
+pathlib

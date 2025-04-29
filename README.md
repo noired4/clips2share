@@ -1,5 +1,9 @@
 # clips2share
 
+> 📦 This is a GitHub mirror of the [original clips2share repository on Codeberg](https://codeberg.org/c2s/clips2share).
+>
+> Please [file issues](https://codeberg.org/c2s/clips2share/issues) and [submit pull requests](https://codeberg.org/c2s/clips2share/pulls) **on Codeberg, not here**.
+
 Clips2share helps you with the process of creating torrents for uploading adult clips to your favorite torrent tracker:
 
 - extract all metadata from a user provided clips4sale link (title, description, tags, price, clip quality, and more)
@@ -46,6 +50,11 @@ use_api = true
 url = http://user:pass@127.0.0.1:8080
 category = Upload
 
+[client:qbittorrent]
+use_api = true
+url = http://user:pass@127.0.0.1:8080
+category = Upload
+
 [tracker:empornium]
 announce_url = http://tracker.empornium.sx:2710/YOURPASSKEY/announce
 source_tag = Emp
@@ -62,6 +71,12 @@ torznab_url = http://127.0.0.1:9696/1/api?apikey=YOUR_PROWLARR_API_KEY
 | delayed_seed           | If true, wait for user input and delay seed to prevent announcing an unknown torrent to tracker |
 | use_hardlinks          | If true, creates hard links instead of symlinks for the video file                              |
 | use_torznab            | If true, uses Prowlarr search instead of waiting for user input to delay seed                   |
+
+| Client Settings  | Description                                      |
+|------------------|--------------------------------------------------|
+| use_api          | If true, uses client API instead of watch folders|
+| url              | URL for the client with username and password    |
+| category         | Client specific category to assign the torrent   |
 
 | Client Settings  | Description                                      |
 |------------------|--------------------------------------------------|
