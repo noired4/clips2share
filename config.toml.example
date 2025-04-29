@@ -1,9 +1,6 @@
 [default]
-static_tags = ["clips4sale.com"]
-
 # Duration (seconds) to wait before seeding torrent.
 delayed_seed = true
-
 # Sets usage of OS file linking to avoid accidental deletion of files
 use_hardlinks = true
 
@@ -11,6 +8,8 @@ use_hardlinks = true
 temporary_directory = "/home/user/temp/"
 
 [tracker]
+# Tags to decorate tracker uploads
+static_tags = ["clips4sale.com"]
 upload_directory = "/home/user/uploads/"
 
 [tracker.empornium]

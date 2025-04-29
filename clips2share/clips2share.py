@@ -127,7 +127,7 @@ def main():
     torrent_temp_dir = config['torrent']['temporary_directory']
     upload_dir = config['tracker']['upload_directory']
     qbittorrent_watch_dir = config['client.qbittorrent']['watch_directory']
-    static_tags = config['default']['static_tags']
+    static_tags = config['tracker']['static_tags']
     delayed_seed = config['default']['delayed_seed']
     use_hardlinks = config['default'].get('use_hardlinks', False)  # Default to False if not present
 
