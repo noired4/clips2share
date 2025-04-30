@@ -23,4 +23,4 @@ category = "Straight"
 use_api = true
 url = "http://user:pass@127.0.0.1:8080"
 category = "Upload"
-watch_directory = "/home/user/uploads/_autoadd/"
+watch_directory = "J:\c2s\watch\"
