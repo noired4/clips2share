@@ -6,21 +6,21 @@ use_hardlinks = true
 
 [torrent]
 # Location for staging files during torrent creation
-temporary_directory = "/home/user/temp/"
+temporary_directory = '/home/user/temp/'
 
 [tracker]
 # Tags to decorate tracker uploads
-static_tags = ["clips4sale.com"]
+static_tags = ['clips4sale.com']
 # Location for completed torrents
-upload_directory = "/home/user/uploads/"
+upload_directory = '/home/user/uploads/'
 
 [tracker.empornium]
-announce_url = "http://tracker.empornium.sx:2710/YOURPASSKEY/announce"
-source_tag = "Emp"
-category = "Straight"
+announce_url = 'http://tracker.empornium.sx:2710/YOURPASSKEY/announce'
+source_tag = 'Emp'
+category = 'Straight'
 
 [client.qbittorrent]
 use_api = true
-url = "http://user:pass@127.0.0.1:8080"
-category = "Upload"
-watch_directory = "J:\c2s\watch\"
+url = 'http://user:pass@127.0.0.1:8080'
+category = 'Upload'
+watch_directory = '/home/user/uploads/_autoadd/'
