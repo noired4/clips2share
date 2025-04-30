@@ -27,6 +27,7 @@ from pathlib import Path
 
 @dataclass
 class Tracker:
+    name: str
     announce_url: str
     category: str
     source_tag: str
@@ -108,6 +109,13 @@ def print_torrent_hash_process(torrent, filepath, pieces_done, pieces_total):
 def get_font_path():
     return str(files('clips2share') / 'fonts')
 
+def has_nested_key(d, *keys):
+    for key in keys:
+        if key not in d:
+            return False
+        d = d[key]
+    return True
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description="clips2share CLI")
     parser.add_argument('-V', '--video', type=str, help="Path to the video file")
@@ -128,16 +136,16 @@ def main():
 
     torrent_temp_dir = config['torrent']['temporary_directory']
     upload_dir = config['tracker']['upload_directory']
-    qbittorrent_watch_dir = config['client.qbittorrent']['watch_directory']
+    qbittorrent_watch_dir = config['client']['qbittorrent']['watch_directory']
     static_tags = config['tracker']['static_tags']
     delayed_seed = config['default']['delayed_seed']
     use_hardlinks = config['default'].get('use_hardlinks', False)  # Default to False if not present
 
     # qBittorrent API configuration
-    if 'client:qbittorrent' in config:
-        use_qb_api = config['client:qbittorrent']['use_api']
-        qb_url = config['client:qbittorrent']['url']
-        qb_category = config['client:qbittorrent']['category']
+    if has_nested_key(config, 'client', 'qbittorrent'):
+        use_qb_api = config['client']['qbittorrent']['use_api']
+        qb_url = config['client']['qbittorrent']['url']
+        qb_category = config['client']['qbittorrent']['category']
     else:
         use_qb_api, qb_url, qb_category = None, None, None
     if use_qb_api:
@@ -147,16 +155,24 @@ def main():
 
         qbt_client = qbittorrent_client.QBittorrentClient(qb_url)
 
-    # Read Tracker from config sections
-    tracker_sections = [s for s in config.keys()
-                       if s.startswith('tracker.')]
+    # Read Trackers from config sections
+    tracker_config = config.get('tracker', {})
+    tracker_sections = {
+        name: section
+        for name, section in tracker_config.items()
+        if isinstance(section, dict)
+    }
 
     trackers = [
-        Tracker(announce_url=config[s]['announce_url'],
-                category=config[s].get('category'),
-                source_tag=config[s]['source_tag']
-                ) for s in tracker_sections
+        Tracker(
+            name=name,
+            announce_url=section['announce_url'],
+            category=section.get('category'),
+            source_tag=section['source_tag']
+        )
+        for name, section in tracker_sections.items()
     ]
+
     print(trackers)
 
     video_path = args.video if args.video else input("Video Path: ")
