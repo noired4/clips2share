@@ -7,12 +7,11 @@ name = "clips2share"
 version = "0.0.7"
 dependencies = [
     "beautifulsoup4",
+    "Jinja2",
     "platformdirs",
     "requests",
     "torf",
     "vcsi",
-    "Jinja2",
-    "pathlib",
 ]
 requires-python = ">=3.8"
 authors = [

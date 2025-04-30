@@ -1,7 +1,6 @@
 beautifulsoup4
+Jinja2
 platformdirs
 requests
 torf
 vcsi
-Jinja2
-pathlib
