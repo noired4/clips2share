@@ -11,7 +11,7 @@ api_key = chv_T_your_api_key_check_your_user_settings_after_logging_in
 host = hamster.is
 
 [client:qbittorrent]
-use_api = true
+use_api = False
 url = http://user:pass@127.0.0.1:8080
 category = Upload
 
