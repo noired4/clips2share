@@ -40,6 +40,10 @@ static_tags = clips4sale.com
 delayed_seed = True
 use_hardlinks = True
 
+[imagehost:chevereto]
+api_key = chv_T_your_api_key_check_your_user_settings_after_logging_in
+host = hamster.is
+
 [client:qbittorrent]
 use_api = true
 url = http://user:pass@127.0.0.1:8080
@@ -59,6 +63,13 @@ category = Straight
 | static_tags            | Tags to be added to every torrent                                                               |
 | delayed_seed           | If true, wait for user input and delay seed to prevent announcing an unknown torrent to tracker |
 | use_hardlinks          | If true, creates hard links instead of symlinks for the video file                              |
+
+| Chevereto | Description                                                                                                                         |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------|
+| host      | Hostname of the Chevereto image hoster                                                                                              |
+| api_key   | API Key for the Chevereto image hoster. After registering and logging in to your account, you will find it in your profile settings |
+
+Note: Chevereto is the image hosting software used by EMP. To use it, you need to create an account [here](https://hamster.is/) and generate an API key in your user profile.
 
 | Client Settings  | Description                                      |
 |------------------|--------------------------------------------------|

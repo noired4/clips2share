@@ -88,17 +88,17 @@ def extract_clip_data(url: str) -> C4SData:
         image_url=image_url
     )
 
-def fapping_empornium_image_upload(img_path):
+
+def chevereto_image_upload(img_path, chevereto_host, chevereto_api_key):
     """
-    Uploads an image to fapping.empornium.sx and returns the image url on success
+    Uploads an image to given chevereto instance and returns the image url on success
     """
-    r = requests.post('https://fapping.empornium.sx/upload.php', files=dict(ImageUp=open(img_path, 'rb')))
-    r.raise_for_status()
-    image_id = r.json()['image_id_public']
-    image_url = f'https://fapping.empornium.sx/image/{image_id}'
-    image = requests.get(image_url)
-    soup = BeautifulSoup(image.text, 'html.parser')
-    return soup.select_one('input[id^="direct-link"]').get('value')
+    payload = {'key': chevereto_api_key, 'format': 'json'}
+    r = requests.post(f'https://{chevereto_host}/api/1/upload', data=payload, files=dict(source=open(img_path, 'rb')))
+    if r.json()['status_code'] == 200:
+        return r.json()['image']['url']
+    else:
+        raise RuntimeError(r.json())
 
 def format_tags_with_dots(source_list):
     return [s.replace(' ', '.') for s in source_list]
@@ -133,6 +133,9 @@ def main():
     static_tags = config['default']['static_tags'].split()
     delayed_seed = config['default'].getboolean('delayed_seed')
     use_hardlinks = config['default'].getboolean('use_hardlinks', fallback=False)
+
+    chevereto_api_key = config['imagehost:chevereto']['api_key']
+    chevereto_host = config['imagehost:chevereto']['host']
 
     # qBittorrent API configuration
     if config.has_section('client:qbittorrent'):
@@ -195,7 +198,7 @@ def main():
         header.write(r.content)
 
     # Upload header image
-    header_image_link = fapping_empornium_image_upload(target_dir + '/images/header.jpg')
+    header_image_link = chevereto_image_upload(target_dir + '/images/header.jpg', chevereto_host=chevereto_host, chevereto_api_key=chevereto_api_key)
 
     # Create Thumbnail Image (using default vcsi parameters copied from interactive debug run)
     vcsi_args = argparse.Namespace(output_path=target_dir + '/images/thumbnail.jpg', config=None,
@@ -221,7 +224,7 @@ def main():
                               thumbnail_output_path=None, actual_size=False, timestamp_format='{TIME}',
                               timestamp_position=vcsi.TimestampPosition.se)
     vcsi.process_file(f'{target_dir}/{clip.studio} - {clip.title}{splitext(video_path)[1]}', args=vcsi_args)
-    thumbnail_image_link = fapping_empornium_image_upload(target_dir + '/images/thumbnail.jpg')
+    thumbnail_image_link = chevereto_image_upload(target_dir + '/images/thumbnail.jpg', chevereto_host=chevereto_host, chevereto_api_key=chevereto_api_key)
 
     script_dir = Path(__file__).resolve().parent
     template_dir = script_dir / 'templates'
