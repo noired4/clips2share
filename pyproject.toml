@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clips2share"
-version = "0.0.8"
+version = "0.0.8.post1"
 dependencies = [
     "beautifulsoup4",
     "Jinja2",
@@ -36,4 +36,4 @@ Changelog = "https://codeberg.org/c2s/clips2share/raw/branch/main/CHANGELOG.md"
 clips2share = "clips2share.clips2share:main"
 
 [tool.setuptools.package-data]
-clips2share = ["fonts/*.ttf"]
+clips2share = ["fonts/*.ttf", "templates/*.jinja"]
