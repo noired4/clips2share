@@ -27,6 +27,7 @@ clips2share
 
 The first run will tell you to download and install the config.ini to your 'user_config_dir'. 
 
+
 ## Running in Docker
 
 You can run clips2share without installing it locally using Docker:
@@ -43,11 +44,12 @@ docker run --rm \
 This runs the app in a temporary container, mounts your configuration and video folders, and passes the necessary arguments. The container will automatically remove itself when the task is complete.
 
 ### Notes
-- The /config volume should contain a config.ini file. You can use the example provided in the Configuration section.
-- The /data volume should point to a directory containing the video file you want to upload.
-- If you use qBittorrent with watch folders, ensure that the qbittorrent_watch_dir path in config.ini is mapped inside /data so the generated .torrent file appears in the expected location inside the container.
-- **Important:** Make sure that the path mappings used by your qBittorrent container match those used by clips2share. For example, if both containers access your host's /home/user/data as /data, the paths will align correctly. If they don’t match, torrent files may reference incorrect locations, causing qBittorrent to fail seeding.
-- **Also important:** The torrent_temp_dir setting must point to a directory that exists inside a Docker-mounted volume. This ensures that the resulting .torrent file is accessible on your host system, allowing you to upload it to a tracker or inspect it if needed.
+- The '/config' volume should contain a config.ini file. You can use the example provided in the Configuration section.
+- The '/data' volume should point to a directory containing the video file you want to upload.
+- If you use qBittorrent with watch folders, ensure that the 'qbittorrent_watch_dir' path in config.ini is mapped inside '/data' so the generated .torrent file appears in the expected location inside the container.
+- **Important:** Make sure that the path mappings used by your qBittorrent container match those used by clips2share. For example, if both containers access your host's '/home/user/data' as '/data', the paths will align correctly. If they don’t match, torrent files may reference incorrect locations, causing qBittorrent to fail seeding.
+- **Also important:** The 'torrent_temp_dir' setting must point to a directory that exists inside a Docker-mounted volume. This ensures that the resulting .torrent file is accessible on your host system, allowing you to upload it to a tracker or inspect it if needed.
+
 
 ## Configuration
 
