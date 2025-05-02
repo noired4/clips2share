@@ -8,7 +8,7 @@ RUN apk add --no-cache \
     make \
     musl-dev \
     libffi-dev \
-	lapack-dev \
+    lapack-dev \
     blas-dev \
     openblas-dev \
     lapack-dev \
@@ -27,7 +27,7 @@ FROM python:alpine
 RUN apk add --no-cache \
     ffmpeg \
     curl \
-	openblas
+    openblas
 
 WORKDIR /app
 
