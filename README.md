@@ -1,8 +1,5 @@
 # clips2share
 
-> 📦 This is a GitHub mirror of the [original clips2share repository on Codeberg](https://codeberg.org/c2s/clips2share).
->
-> Please [file issues](https://codeberg.org/c2s/clips2share/issues) and [submit pull requests](https://codeberg.org/c2s/clips2share/pulls) **on Codeberg, not here**.
 
 Clips2share helps you with the process of creating torrents for uploading adult clips to your favorite torrent tracker:
 
@@ -43,8 +40,12 @@ static_tags = clips4sale.com
 delayed_seed = True
 use_hardlinks = True
 
+[imagehost:chevereto]
+api_key = chv_T_your_api_key_check_your_user_settings_after_logging_in
+host = hamster.is
+
 [client:qbittorrent]
-use_api = true
+use_api = False
 url = http://user:pass@127.0.0.1:8080
 category = Upload
 
@@ -62,6 +63,13 @@ category = Straight
 | static_tags            | Tags to be added to every torrent                                                               |
 | delayed_seed           | If true, wait for user input and delay seed to prevent announcing an unknown torrent to tracker |
 | use_hardlinks          | If true, creates hard links instead of symlinks for the video file                              |
+
+| Chevereto | Description                                                                                                                         |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------|
+| host      | Hostname of the Chevereto image hoster                                                                                              |
+| api_key   | API Key for the Chevereto image hoster. After registering and logging in to your account, you will find it in your profile settings |
+
+Note: Chevereto is the image hosting software used by EMP. To use it, you need to create an account [here](https://hamster.is/) and generate an API key in your user profile.
 
 | Client Settings  | Description                                      |
 |------------------|--------------------------------------------------|
