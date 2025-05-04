@@ -6,7 +6,7 @@ steps:
   - name: docker build & push
     image: woodpeckerci/plugin-docker-buildx
     settings:
-      repo: ${CI_REPO_OWNER}/${CI_REPO_NAME}
+      repo: noired4/clips2share
       tags: [latest]
       dockerfile: Dockerfile
       context: .
