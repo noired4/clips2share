@@ -1,11 +1,21 @@
+# Support for direct script execution
+# This is a workaround for running the script directly without installing it as a package.
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    import os
+    sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + "/.."))
+
+# End of workaround
+
 import argparse
 import configparser
+import os
 import requests
 import time
-import torznab
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 from importlib.resources import files
+from jinja2 import Environment, FileSystemLoader
 from os import getenv, makedirs, symlink, link
 from os.path import basename, isfile, splitext
 from platformdirs import user_config_dir
@@ -13,7 +23,9 @@ from shutil import move
 from torf import Torrent
 from urllib.parse import quote
 from vcsi import vcsi
-
+from clips2share import qbittorrent_client
+from clips2share import torznab
+from pathlib import Path
 
 @dataclass
 class Tracker:
@@ -78,17 +90,17 @@ def extract_clip_data(url: str) -> C4SData:
         image_url=image_url
     )
 
-def fapping_empornium_image_upload(img_path):
+
+def chevereto_image_upload(img_path, chevereto_host, chevereto_api_key):
     """
-    Uploads an image to fapping.empornium.sx and returns the image url on success
+    Uploads an image to given chevereto instance and returns the image url on success
     """
-    r = requests.post('https://fapping.empornium.sx/upload.php', files=dict(ImageUp=open(img_path, 'rb')))
-    r.raise_for_status()
-    image_id = r.json()['image_id_public']
-    image_url = f'https://fapping.empornium.sx/image/{image_id}'
-    image = requests.get(image_url)
-    soup = BeautifulSoup(image.text, 'html.parser')
-    return soup.select_one('input[id^="direct-link"]').get('value')
+    payload = {'key': chevereto_api_key, 'format': 'json'}
+    r = requests.post(f'https://{chevereto_host}/api/1/upload', data=payload, files=dict(source=open(img_path, 'rb')))
+    if r.json()['status_code'] == 200:
+        return r.json()['image']['url']
+    else:
+        raise RuntimeError(r.json())
 
 def format_tags_with_dots(source_list):
     return [s.replace(' ', '.') for s in source_list]
@@ -129,6 +141,40 @@ def main():
     if(torznab_poll_interval < 1):
         print('torznab_poll_interval must be greater than 0')
         exit(2)
+
+    chevereto_api_key = config['imagehost:chevereto']['api_key']
+    chevereto_host = config['imagehost:chevereto']['host']
+
+    # qBittorrent API configuration
+    if config.has_section('client:qbittorrent'):
+        use_qb_api = config['client:qbittorrent'].getboolean('use_api', fallback=False)
+        qb_url = config['client:qbittorrent'].get('url', fallback=None)
+        qb_category = config['client:qbittorrent'].get('category', fallback="Upload")
+    else:
+        use_qb_api, qb_url, qb_category = None, None, None
+    if use_qb_api:
+        if not qb_url:
+            print("Error: use_qbittorrent_api is enabled, but qbittorrent_url is not set in the config.")
+            exit(2)
+
+        qbt_client = qbittorrent_client.QBittorrentClient(qb_url)
+
+    chevereto_api_key = config['imagehost:chevereto']['api_key']
+    chevereto_host = config['imagehost:chevereto']['host']
+
+    # qBittorrent API configuration
+    if config.has_section('client:qbittorrent'):
+        use_qb_api = config['client:qbittorrent'].getboolean('use_api', fallback=False)
+        qb_url = config['client:qbittorrent'].get('url', fallback=None)
+        qb_category = config['client:qbittorrent'].get('category', fallback="Upload")
+    else:
+        use_qb_api, qb_url, qb_category = None, None, None
+    if use_qb_api:
+        if not qb_url:
+            print("Error: use_qbittorrent_api is enabled, but qbittorrent_url is not set in the config.")
+            exit(2)
+
+        qbt_client = qbittorrent_client.QBittorrentClient(qb_url)
 
     # Read Tracker from config sections
     tracker_sections = [s for s in config.sections()
@@ -178,7 +224,7 @@ def main():
         header.write(r.content)
 
     # Upload header image
-    header_image_link = fapping_empornium_image_upload(target_dir + '/images/header.jpg')
+    header_image_link = chevereto_image_upload(target_dir + '/images/header.jpg', chevereto_host=chevereto_host, chevereto_api_key=chevereto_api_key)
 
     # Create Thumbnail Image (using default vcsi parameters copied from interactive debug run)
     vcsi_args = argparse.Namespace(output_path=target_dir + '/images/thumbnail.jpg', config=None,
@@ -204,7 +250,16 @@ def main():
                               thumbnail_output_path=None, actual_size=False, timestamp_format='{TIME}',
                               timestamp_position=vcsi.TimestampPosition.se)
     vcsi.process_file(f'{target_dir}/{clip.studio} - {clip.title}{splitext(video_path)[1]}', args=vcsi_args)
-    thumbnail_image_link = fapping_empornium_image_upload(target_dir + '/images/thumbnail.jpg')
+    thumbnail_image_link = chevereto_image_upload(target_dir + '/images/thumbnail.jpg', chevereto_host=chevereto_host, chevereto_api_key=chevereto_api_key)
+
+    script_dir = Path(__file__).resolve().parent
+    template_dir = script_dir / 'templates'
+
+    jinja_env = Environment(
+        loader=FileSystemLoader(str(template_dir)),
+        autoescape=True,
+        trim_blocks=True,
+        lstrip_blocks=True)
 
     # Create Torrents
     for tracker in trackers:
@@ -219,58 +274,21 @@ def main():
         t._metainfo['metadata']['category'] = tracker.category
         t._metainfo['metadata']['cover url'] = header_image_link
         t._metainfo['metadata']['taglist'] = format_tags_with_dots(clip.keywords + static_tags)
-        t._metainfo['metadata']['description'] = f'''[table=852px,nball]
-[tr=gradient:to right;#0000 5%;#000000;#000000;#0000 95%]
-[td=90%][align=center][color=#f4f4f4][b][size=5]{clip.studio} - {clip.title}[/size][/b][/color][/align][/td]
-[/tr]
-[/table]
-[align=center][img=800]{header_image_link}[/img][/align]
+        template = jinja_env.get_template('default_bbcode.jinja')
+        t._metainfo['metadata']['description'] = template.render(
+            clip=clip,
+            header_image_link=header_image_link,
+            thumbnail_image_link=thumbnail_image_link,
+        )
+        print("BBCode:\n-----TORRENT DESCRIPTION-----\n" +
+              t._metainfo['metadata']['description'] + "\n-----DESCRIPTION END-----\n")
 
-
-
-[hr][hr]
-
-
-[table=852px,nball]
-[tr=gradient:to right;#0000 15%;#000000;#000000;#0000 85%]
-[td=90%][align=center][color=#f4f4f4][b][size=3]DETAILS[/size][/b][/color][/align][/td]
-[/tr]
-[/table]
-
-[table=nball,45%]
-[tr][td=10%][size=2][center][u][b]Resolution[/b][/u][/center][/size] [center][img]https://jerking.empornium.ph/images/2018/03/16/resolution.png[/img]
-[size=2]{clip.resolution}[/size][/center] [/td][td=10%][size=2][center][u][b]Duration[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2018/03/16/duration.png[/img]
-[size=2]{clip.duration}[/size][/center] [/td][td=10%][size=2][center][u][b]Production Date[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2018/03/16/duration.png[/img]
-[size=2]{clip.date}[/size][/center] [/td][td=10%][size=2][center][u][b]Format[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2018/03/16/format.png[/img]
-[size=2]{clip.format}[/size][/center] [/td][td=10%][size=2][center][u][b]Size[/b][/u][/center][/size][center][img]https://jerking.empornium.ph/images/2017/05/29/size.png[/img]
-[size=2]{clip.size}[/size][/center]
-[/td]
-[/tr]
-[/table]
-
-[table=60%,nball]
-[tr][td][size=2]
-{clip.description}
-Price: {clip.price}
-[/size][/td]
-[/tr]
-[/table]
-
-
-[hr][hr]
-
-
-[table=nball]
-[tr=gradient:to right;#0000 15%;#000000;#000000;#0000 85%]
-[td=90%][align=center][color=#f4f4f4][b][size=3]SCREENSHOTS[/size][/b][/color][/align][/td]
-[/tr]
-[/table]
-[align=center][img=1100]{thumbnail_image_link}[/img][/align]
-'''
-        print(f'Creating torrent for {tracker.source_tag}... {t}')
+        print(f'creating torrent for {tracker.source_tag}... {t}')
         t.generate(callback=print_torrent_hash_process, interval=1)
         t.write(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
+        print(f'Torrent created in: {torrent_temp_dir}')
         torrent_title = f'{clip.studio} - {clip.title}'
+        
         if use_torznab:
             try:
                 print(f'[{tracker.source_tag}] Checking for existing torrents...')
@@ -297,8 +315,36 @@ Price: {clip.price}
                 time.sleep(args.delay_seconds)
             else:
                 input(f'Upload torrent to tracker {tracker.source_tag}, then hit Enter to autoload to qBittorrent...')
-        move(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent',
-             f'{qbittorrent_watch_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
+
+        torrent_filename = f'[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent'
+        torrent_path = f'{torrent_temp_dir}{torrent_filename}'
+
+        if use_qb_api:
+            print(f"Uploading {torrent_filename} via qBittorrent API...")
+            torrent_name = f'{clip.studio} - {clip.title}'
+            try:
+                with open(torrent_path, 'rb') as f:
+                    torrent_bytes = f.read()
+                qbt_client.send_torrent(
+                    torrent_bytes=torrent_bytes,
+                    name=torrent_name,
+                    category=qb_category,
+                    savepath=qbittorrent_upload_dir,
+                )
+                print("API Upload successful.")
+                # Clean up the temporary torrent file after successful upload
+                try:
+                    os.remove(torrent_path)
+                except OSError as e:
+                    print(f"Error removing temp torrent {torrent_path}: {e}")
+            except Exception as e:
+                print("API upload failed:", e)
+                exit(3)
+        else:
+            watch_target = f'{qbittorrent_watch_dir}{torrent_filename}'
+            print(f"Using watch folder: {watch_target}")
+            move(torrent_path, watch_target)
+
         print('done...')
 
 

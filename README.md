@@ -1,5 +1,6 @@
 # clips2share
 
+
 Clips2share helps you with the process of creating torrents for uploading adult clips to your favorite torrent tracker:
 
 - extract all metadata from a user provided clips4sale link (title, description, tags, price, clip quality, and more)
@@ -8,6 +9,7 @@ Clips2share helps you with the process of creating torrents for uploading adult 
 - create thumbnails from local clip using vcsi library and upload to image hoster 
 - create the final torrent with torf lib and send it to qbittorrent 
 - allows uploading to multiple trackers
+
 
 ## Installation
 
@@ -26,6 +28,29 @@ clips2share
 The first run will tell you to download and install the config.ini to your 'user_config_dir'. 
 
 
+## Running in Docker
+
+You can run clips2share without installing it locally using Docker:
+
+```bash
+docker run --pull always --rm --user $(id -u):$(id -g) \
+  -v /mypath/config:/config \
+  -v /mypath/torrent:/torrent \
+  noired4/clips2share:latest \
+  --video "/torrent/Upload/video.mp4" \
+  --url "https://www.example.com" \
+  --delay-seconds 120
+```
+This runs the app in a temporary container, mounts your configuration and video folders, and passes the necessary arguments. The container will automatically remove itself when the task is complete.
+
+### Notes
+- The '/config' volume should contain a config.ini file. You can use the example provided in the Configuration section.
+- The '/data' volume should point to a directory containing the video file you want to upload.
+- If you use qBittorrent with watch folders, ensure that the 'qbittorrent_watch_dir' path in config.ini is mapped inside '/data' so the generated .torrent file appears in the expected location inside the container.
+- **Important:** Make sure that the path mappings used by your qBittorrent container match those used by clips2share. For example, if both containers access your host's '/home/user/data' as '/data', the paths will align correctly. If they don’t match, torrent files may reference incorrect locations, causing qBittorrent to fail seeding.
+- **Also important:** The 'torrent_temp_dir' setting must point to a directory that exists inside a Docker-mounted volume. This ensures that the resulting .torrent file is accessible on your host system, allowing you to upload it to a tracker or inspect it if needed.
+
+
 ## Configuration
 
 This is an example config.ini
@@ -40,6 +65,15 @@ delayed_seed = True
 use_hardlinks = True
 use_torznab = False
 torznab_poll_interval = 30
+
+[imagehost:chevereto]
+api_key = chv_T_your_api_key_check_your_user_settings_after_logging_in
+host = hamster.is
+
+[client:qbittorrent]
+use_api = False
+url = http://user:pass@127.0.0.1:8080
+category = Upload
 
 [tracker:empornium]
 announce_url = http://tracker.empornium.sx:2710/YOURPASSKEY/announce
@@ -57,6 +91,19 @@ torznab_url = http://127.0.0.1:9696/1/api?apikey=YOUR_PROWLARR_API_KEY
 | delayed_seed           | If true, wait for user input and delay seed to prevent announcing an unknown torrent to tracker |
 | use_hardlinks          | If true, creates hard links instead of symlinks for the video file                              |
 | use_torznab            | If true, uses Prowlarr search instead of waiting for user input to delay seed                   |
+
+| Chevereto | Description                                                                                                                         |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------|
+| host      | Hostname of the Chevereto image hoster                                                                                              |
+| api_key   | API Key for the Chevereto image hoster. After registering and logging in to your account, you will find it in your profile settings |
+
+Note: Chevereto is the image hosting software used by EMP. To use it, you need to create an account [here](https://hamster.is/) and generate an API key in your user profile.
+
+| Client Settings  | Description                                      |
+|------------------|--------------------------------------------------|
+| use_api          | If true, uses client API instead of watch folders|
+| url              | URL for the client with username and password    |
+| category         | Client specific category to assign the torrent   |
 
 | Tracker Settings | Description                                      |
 |------------------|--------------------------------------------------|

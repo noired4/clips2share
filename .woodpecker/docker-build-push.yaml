@@ -1,0 +1,16 @@
+when:
+  event: [push, manual]
+  branch: [main, feature/docker]
+
+steps:
+  - name: docker build & push
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      repo: noired4/clips2share
+      tags: [latest]
+      dockerfile: Dockerfile
+      context: .
+      username:
+        from_secret: docker_user
+      password:
+        from_secret: docker_token

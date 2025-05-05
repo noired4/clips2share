@@ -1,4 +1,5 @@
 beautifulsoup4
+Jinja2
 platformdirs
 requests
 torf

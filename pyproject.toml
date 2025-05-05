@@ -4,9 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clips2share"
-version = "0.0.7"
+version = "0.0.8.post1"
 dependencies = [
     "beautifulsoup4",
+    "Jinja2",
     "platformdirs",
     "requests",
     "torf",
@@ -23,16 +24,16 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Environment :: Console",
-    "License :: OSI Approved :: MIT License",
 ]
 
 [project.urls]
 Homepage = "https://codeberg.org/c2s/clips2share"
 Repository = "https://codeberg.org/c2s/clips2share.git"
 "Bug Tracker" = "https://codeberg.org/c2s/clips2share/issues"
+Changelog = "https://codeberg.org/c2s/clips2share/raw/branch/main/CHANGELOG.md"
 
 [project.scripts]
 clips2share = "clips2share.clips2share:main"
 
 [tool.setuptools.package-data]
-clips2share = ["fonts/*.ttf"]
+clips2share = ["fonts/*.ttf", "templates/*.jinja"]
