@@ -36,7 +36,7 @@ You can run clips2share without installing it locally using Docker:
 docker run --rm \
   -v /home/user/c2s/config:/config \
   -v /home/user/data:/data \
-  ghcr.io/noired4/clips2share:dev \
+  noired4/clips2share:latest \
   --video "/data/Upload/video.mp4" \
   --url "https://www.example.com" \
   --delay-seconds 120
