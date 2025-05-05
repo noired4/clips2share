@@ -33,11 +33,11 @@ The first run will tell you to download and install the config.ini to your 'user
 You can run clips2share without installing it locally using Docker:
 
 ```bash
-docker run --rm \
-  -v /home/user/c2s/config:/config \
-  -v /home/user/data:/data \
+docker run --pull always --rm --user $(id -u):$(id -g) \
+  -v /mypath/config:/config \
+  -v /mypath/torrent:/torrent \
   noired4/clips2share:latest \
-  --video "/data/Upload/video.mp4" \
+  --video "/torrent/Upload/video.mp4" \
   --url "https://www.example.com" \
   --delay-seconds 120
 ```
