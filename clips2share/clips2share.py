@@ -260,6 +260,7 @@ def main():
         print(f'creating torrent for {tracker.source_tag}... {t}')
         t.generate(callback=print_torrent_hash_process, interval=1)
         t.write(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
+        print(f'Torrent created in: {torrent_temp_dir}')
         if delayed_seed:
             if args.delay_seconds:
                 print(f'Upload torrent to tracker {tracker.source_tag}. Waiting {args.delay_seconds} seconds before autoloading to qBittorrent...')
