@@ -235,32 +235,33 @@ def main():
         trim_blocks=True,
         lstrip_blocks=True)
 
+    t = Torrent(path=target_dir)
+    t.private = True
+    t._metainfo['metadata'] = dict()
+    t._metainfo['metadata']['title'] = f'{clip.studio} - {clip.title}'
+    t._metainfo['metadata']['cover url'] = header_image_link
+    t._metainfo['metadata']['taglist'] = format_tags_with_dots(clip.keywords + static_tags)
+    template = jinja_env.get_template('default_bbcode.jinja')
+    t._metainfo['metadata']['description'] = template.render(
+        clip=clip,
+        header_image_link=header_image_link,
+        thumbnail_image_link=thumbnail_image_link,
+    )
+    print("BBCode:\n-----TORRENT DESCRIPTION-----\n" + t._metainfo['metadata']['description'] + "\n-----DESCRIPTION END-----\n")
+
+    t.generate(callback=print_torrent_hash_process, interval=1)
+
     # Create Torrents
     for tracker in trackers:
-        t = Torrent(path=target_dir,
-                    trackers=[tracker.announce_url],
-                    )
-        t.private = True
+        t.trackers = tracker.announce_url    
         t.source = tracker.source_tag
-        t._metainfo['metadata'] = dict()
-        t._metainfo['metadata']['title'] = f'{clip.studio} - {clip.title}'
+
         # TODO: category is not working, this is probably unsupported on luminance currently?
         t._metainfo['metadata']['category'] = tracker.category
-        t._metainfo['metadata']['cover url'] = header_image_link
-        t._metainfo['metadata']['taglist'] = format_tags_with_dots(clip.keywords + static_tags)
-        template = jinja_env.get_template('default_bbcode.jinja')
-        t._metainfo['metadata']['description'] = template.render(
-            clip=clip,
-            header_image_link=header_image_link,
-            thumbnail_image_link=thumbnail_image_link,
-        )
-        print("BBCode:\n-----TORRENT DESCRIPTION-----\n" +
-              t._metainfo['metadata']['description'] + "\n-----DESCRIPTION END-----\n")
 
         print(f'creating torrent for {tracker.source_tag}... {t}')
-        t.generate(callback=print_torrent_hash_process, interval=1)
+        
         t.write(f'{torrent_temp_dir}[{tracker.source_tag}]{clip.studio} - {clip.title}.torrent')
-        print(f'Torrent created in: {torrent_temp_dir}')
         if delayed_seed:
             if args.delay_seconds:
                 print(f'Upload torrent to tracker {tracker.source_tag}. Waiting {args.delay_seconds} seconds before autoloading to qBittorrent...')
@@ -297,6 +298,8 @@ def main():
             print(f"Using watch folder: {watch_target}")
             move(torrent_path, watch_target)
 
+        t.trackers.clear()
+        t.source = None
         print('done...')
 
 
