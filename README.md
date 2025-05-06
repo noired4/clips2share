@@ -155,10 +155,14 @@ This optional environment variable allows to overwrite the path to the config (w
 `C2S_CONFIG_PATH`: `/path/to/config.ini`
 
 
-
 ## Contributing
 
 Contributions are always welcome!
+
+
+## Contact
+
+For feedback, feature requests or bug reports please create an issue or join our [discord developer channel](https://discord.gg/45beWDKq)
 
 
 ## License
